@@ -151,7 +151,10 @@ macro_rules! num_self {
             if let Some(nonzero) = Self::Value::new(v) {
                 Ok(nonzero)
             } else {
-                Err(Error::invalid_value(Unexpected::Unsigned(0), &self))
+                Err(Error::invalid_value(
+                    Unexpected::Unsigned(as_unsigned_int!(v)),
+                    &self,
+                ))
             }
         }
     };
@@ -176,7 +179,10 @@ macro_rules! num_as_self {
             if let Some(nonzero) = Self::Value::new(v as $primitive) {
                 Ok(nonzero)
             } else {
-                Err(Error::invalid_value(Unexpected::Unsigned(0), &self))
+                Err(Error::invalid_value(
+                    Unexpected::Unsigned(as_unsigned_int!(v)),
+                    &self,
+                ))
             }
         }
     };
@@ -194,7 +200,10 @@ macro_rules! int_to_int {
             {
                 Ok(v as Self::Value)
             } else {
-                Err(Error::invalid_value(Unexpected::Signed(v as i64), &self))
+                Err(Error::invalid_value(
+                    Unexpected::Signed(as_signed_int!(v)),
+                    &self,
+                ))
             }
         }
     };
@@ -211,7 +220,10 @@ macro_rules! int_to_int {
                     return Ok(nonzero);
                 }
             }
-            Err(Error::invalid_value(Unexpected::Signed(v as i64), &self))
+            Err(Error::invalid_value(
+                Unexpected::Signed(as_signed_int!(v)),
+                &self,
+            ))
         }
     };
 }
@@ -226,7 +238,10 @@ macro_rules! int_to_uint {
             if 0 <= v && v as u64 <= Self::Value::max_value() as u64 {
                 Ok(v as Self::Value)
             } else {
-                Err(Error::invalid_value(Unexpected::Signed(v as i64), &self))
+                Err(Error::invalid_value(
+                    Unexpected::Signed(as_signed_int!(v)),
+                    &self,
+                ))
             }
         }
     };
@@ -241,7 +256,10 @@ macro_rules! int_to_uint {
                     return Ok(nonzero);
                 }
             }
-            Err(Error::invalid_value(Unexpected::Signed(v as i64), &self))
+            Err(Error::invalid_value(
+                Unexpected::Signed(as_signed_int!(v)),
+                &self,
+            ))
         }
     };
 }
@@ -256,7 +274,10 @@ macro_rules! uint_to_self {
             if v as u64 <= Self::Value::max_value() as u64 {
                 Ok(v as Self::Value)
             } else {
-                Err(Error::invalid_value(Unexpected::Unsigned(v as u64), &self))
+                Err(Error::invalid_value(
+                    Unexpected::Unsigned(as_unsigned_int!(v)),
+                    &self,
+                ))
             }
         }
     };
@@ -271,7 +292,10 @@ macro_rules! uint_to_self {
                     return Ok(nonzero);
                 }
             }
-            Err(Error::invalid_value(Unexpected::Unsigned(v as u64), &self))
+            Err(Error::invalid_value(
+                Unexpected::Unsigned(as_unsigned_int!(v)),
+                &self,
+            ))
         }
     };
 }
@@ -397,7 +421,7 @@ serde_if_integer128! {
                     if let Some(nonzero) = Self::Value::new(v as $primitive) {
                         Ok(nonzero)
                     } else {
-                        Err(Error::invalid_value(Unexpected::Unsigned(0), &self))
+                        Err(Error::invalid_value(Unexpected::Unsigned(as_unsigned_int!(0)), &self))
                     }
                 } else {
                     Err(Error::invalid_value(
@@ -1472,7 +1496,7 @@ macro_rules! variant_identifier {
                             $(
                                 $index => Ok($name_kind :: $variant),
                             )*
-                            _ => Err(Error::invalid_value(Unexpected::Unsigned(value), &self),),
+                            _ => Err(Error::invalid_value(Unexpected::Unsigned(as_unsigned_int!(value)), &self),),
                         }
                     }
 
@@ -2470,7 +2494,10 @@ where
                             0 => Ok(Field::Unbounded),
                             1 => Ok(Field::Included),
                             2 => Ok(Field::Excluded),
-                            _ => Err(Error::invalid_value(Unexpected::Unsigned(value), &self)),
+                            _ => Err(Error::invalid_value(
+                                Unexpected::Unsigned(as_unsigned_int!(value)),
+                                &self,
+                            )),
                         }
                     }
 
@@ -2580,7 +2607,10 @@ where
                         match value {
                             0 => Ok(Field::Ok),
                             1 => Ok(Field::Err),
-                            _ => Err(Error::invalid_value(Unexpected::Unsigned(value), &self)),
+                            _ => Err(Error::invalid_value(
+                                Unexpected::Unsigned(as_unsigned_int!(value)),
+                                &self,
+                            )),
                         }
                     }
 

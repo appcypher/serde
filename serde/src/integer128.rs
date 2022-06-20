@@ -80,3 +80,35 @@ macro_rules! serde_if_integer128 {
 macro_rules! serde_if_integer128 {
     ($($tt:tt)*) => {};
 }
+
+#[macro_export]
+#[doc(hidden)]
+macro_rules! as_signed_int {
+    ($e:expr) => {{
+        #[cfg(not(no_integer128))]
+        {
+            $e as i128
+        }
+
+        #[cfg(no_integer128)]
+        {
+            $e as i64
+        }
+    }};
+}
+
+#[macro_export]
+#[doc(hidden)]
+macro_rules! as_unsigned_int {
+    ($e:expr) => {{
+        #[cfg(not(no_integer128))]
+        {
+            $e as u128
+        }
+
+        #[cfg(no_integer128)]
+        {
+            $e as u64
+        }
+    }};
+}

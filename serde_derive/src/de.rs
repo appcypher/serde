@@ -2172,7 +2172,7 @@ fn deserialize_identifier(
         let fallthrough_msg = format!("{} index 0 <= i < {}", index_expecting, fields.len());
         u64_fallthrough_arm_tokens = quote! {
             _serde::__private::Err(_serde::de::Error::invalid_value(
-                _serde::de::Unexpected::Unsigned(__value),
+                _serde::de::Unexpected::Unsigned(_serde::as_unsigned_int!(__value)),
                 &#fallthrough_msg,
             ))
         };

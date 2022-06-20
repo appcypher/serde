@@ -129,6 +129,7 @@ pub use self::ignored_any::IgnoredAny;
 #[cfg(feature = "std")]
 #[doc(no_inline)]
 pub use std::error::Error as StdError;
+
 #[cfg(not(feature = "std"))]
 #[doc(no_inline)]
 pub use std_error::Error as StdError;
@@ -336,11 +337,23 @@ pub enum Unexpected<'a> {
 
     /// The input contained an unsigned integer `u8`, `u16`, `u32` or `u64` that
     /// was not expected.
+    #[cfg(no_integer128)]
     Unsigned(u64),
+
+    /// The input contained an unsigned integer `u8`, `u16`, `u32`, `u64` or `u128` that
+    /// was not expected.
+    #[cfg(not(no_integer128))]
+    Unsigned(u128),
 
     /// The input contained a signed integer `i8`, `i16`, `i32` or `i64` that
     /// was not expected.
+    #[cfg(no_integer128)]
     Signed(i64),
+
+    /// The input contained a signed integer `i8`, `i16`, `i32`, `i64`, or `i128` that
+    /// was not expected.
+    #[cfg(not(no_integer128))]
+    Signed(i128),
 
     /// The input contained a floating point `f32` or `f64` that was not
     /// expected.
@@ -1356,7 +1369,10 @@ pub trait Visitor<'de>: Sized {
     where
         E: Error,
     {
-        Err(Error::invalid_type(Unexpected::Signed(v), &self))
+        Err(Error::invalid_type(
+            Unexpected::Signed(as_signed_int!(v)),
+            &self,
+        ))
     }
 
     serde_if_integer128! {
@@ -1418,7 +1434,10 @@ pub trait Visitor<'de>: Sized {
     where
         E: Error,
     {
-        Err(Error::invalid_type(Unexpected::Unsigned(v), &self))
+        Err(Error::invalid_type(
+            Unexpected::Unsigned(as_unsigned_int!(v)),
+            &self,
+        ))
     }
 
     serde_if_integer128! {

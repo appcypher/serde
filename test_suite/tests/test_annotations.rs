@@ -1227,7 +1227,7 @@ where
     let n = i8::deserialize(deserializer)?;
     match n {
         0 => Ok(()),
-        _ => Err(de::Error::invalid_value(Unexpected::Signed(n as i64), &"0")),
+        _ => Err(de::Error::invalid_value(Unexpected::Signed(serde::as_signed_int!(n)), &"0")),
     }
 }
 
